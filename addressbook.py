@@ -1,5 +1,6 @@
 from collections import UserDict
 from datetime import datetime, timedelta
+import pickle
 
 class AddressBook(UserDict):
     def add_record(self, record):
@@ -13,6 +14,19 @@ class AddressBook(UserDict):
             del self.data[name]
         else:
             raise ValueError("Record not found")
+        
+    def save_data(self, filename="addressbook.pkl"):
+        with open(filename, "wb") as f:
+            pickle.dump(self, f)
+
+    def load_data(self, filename="addressbook.pkl"):
+        try:
+            with open(filename, "rb") as f:
+                loaded_book = pickle.load(f)
+                self.data = loaded_book.data
+        except FileNotFoundError:
+            print("No saved data to load")
+            pass
         
     def get_upcoming_birthdays(self, shift_weekend_birthday_to_monday=True):
         today = datetime.now().date()
